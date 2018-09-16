@@ -1,4 +1,4 @@
-plot.func <- function(edgelist, embedding)
+plot.func <- function(edgelist, embedding, label=T)
 {
     library(igraph)
     library(gridExtra)
@@ -21,7 +21,7 @@ plot.func <- function(edgelist, embedding)
     y[,1] <- y[,1]+1
 
     # Cria os plots
-    p <- ggnet2(g, label=T, node.color="orange")
+    p <- ggnet2(g, label=label, node.color="orange")
     q <- ggplot(y, aes(V2, V3, label = V1)) +
         geom_text_repel() +
         geom_point(color = 'red') +
