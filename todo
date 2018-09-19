@@ -1,0 +1,11 @@
+gerar emb2 (-l:1000 -r:100):
+    wiki
+    Enron
+    bitcoinotc
+
+Plots emb2:
+    wiki
+    Enron
+    bitcoinotc
+
+Plotar CCDF do grafo aleatório com p crítico
