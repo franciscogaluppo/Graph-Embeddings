@@ -1,5 +1,6 @@
 library(igraph)
 library(ggplot2)
+library(ggalt)
 library(ggrepel)
 library(GGally)
 library(grid)
@@ -7,7 +8,7 @@ library(gridBase)
 library(gridExtra)
 
 
-graph.name <- "wiki-Vote"
+graph.name <- "soc-sign-bitcoinotc"
 
 # Lê grafo
 x <- read.table(
@@ -25,7 +26,7 @@ g <- graph_from_edgelist(x, directed=F)
 
 # Lê embedding
 y <- read.table(
-    paste("emb/", graph.name, ".emb", sep=""),
+    paste("emb/", graph.name, "-2d.emb", sep=""),
     sep = " ", skip=1)
 ordem <- order(y[,1])
 y <- y[ordem,]
@@ -46,13 +47,16 @@ for(i in 1:comps$no)
 y$V5 <- y$V1
 y$V5[-which(y$V1 %in% greatest.degree)] <- ""
 
+ordem <- order(as.numeric(V(g)$name))
+y$V6 <- comps$membership[ordem]
 
-names(y) <- c("node", "x", "y", "degree", "lab")
+
+names(y) <- c("node", "x", "y", "degree", "lab", "component")
 
 # Gera os plots
 # Gradiente criado por:
 # https://natpoor.blogspot.com/2016/07/making-spectrumgradient-color-palette.html
-pdf(paste("plots/node2vec-2d ", graph.name, ".pdf", sep=""), width=14, height=7)
+pdf(paste("plots/teste node2vec-2d ", graph.name, ".pdf", sep=""), width=14, height=7)
 par(mfrow=c(1,2))
 
 resolution <- 10
@@ -69,6 +73,7 @@ pushViewport(vps$figure)
 vp1 <-plotViewport(c(1.8,1,0,1))
 
 q <- ggplot(y, aes(x, y, label=lab, color=degree)) +
+    geom_encircle(aes(group=component)) +
     geom_point() +
     geom_text_repel(color="black") +
     scale_color_gradient(low="yellow", high="red") +
