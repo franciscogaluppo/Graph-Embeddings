@@ -8,13 +8,13 @@ library(gridBase)
 library(gridExtra)
 
 
-graph.name <- "soc-sign-bitcoinotc"
+graph.name <- "email-Enron"
 
 # Lê grafo
 x <- read.table(
     paste("graphs/", graph.name, ".edgelist", sep=""),
     sep = ' ', header=F, strip.white = TRUE
-    #colClasses = c("integer", "integer", "NULL")
+    # colClasses = c("integer", "integer", "NULL")
 )
 
 x[,1] <- as.character(x[,1])
@@ -56,7 +56,7 @@ names(y) <- c("node", "x", "y", "degree", "lab", "component")
 # Gera os plots
 # Gradiente criado por:
 # https://natpoor.blogspot.com/2016/07/making-spectrumgradient-color-palette.html
-pdf(paste("plots/teste node2vec-2d ", graph.name, ".pdf", sep=""), width=14, height=7)
+pdf(paste("plots/node2vec-2d ", graph.name, ".pdf", sep=""), width=14, height=7)
 par(mfrow=c(1,2))
 
 resolution <- 10
@@ -73,9 +73,9 @@ pushViewport(vps$figure)
 vp1 <-plotViewport(c(1.8,1,0,1))
 
 q <- ggplot(y, aes(x, y, label=lab, color=degree)) +
-    geom_encircle(aes(group=component)) +
     geom_point() +
-    geom_text_repel(color="black") +
+    # geom_encircle(aes(group=component), col=y$component) +
+    # geom_text_repel(color="black") +
     scale_color_gradient(low="yellow", high="red") +
     theme_classic(base_size = 14) +
     labs(x="", y="")
