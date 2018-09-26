@@ -7,7 +7,7 @@ library(gridBase)
 library(gridExtra)
 
 # Lê grafo
-graph.name <- "soc-sign-bitcoinotc"
+graph.name <- "wiki-Vote"
 x <- read.table(
     paste("graphs/", graph.name, ".edgelist", sep=""),
     sep = ' ', header=F, strip.white = TRUE
@@ -40,8 +40,12 @@ for(i in 1:comps$no)
     y$lab[match(vertice, y$node)] <- vertice
 }
 
-# Pontos de maior log.degree por cima
+# Pontos de maior log.degree aparecendo por cima
 y <- y[order(y$log.degree),]
+
+# Cria novo grafo com a ordem correta dos vértices
+h <- make_empty_graph(n=0, directed=F) + vertices(y$node) +
+edges(matrix(t(get.edgelist(g)), nrow=1))
 
 # Gera os plots
 pdf(paste("plots/node2vec-2d ", graph.name, ".pdf", sep=""), width=14, height=7)
@@ -54,10 +58,8 @@ resolution <- 100
 palette <- colorRampPalette(c('yellow','red'))
 normalized <- y$log.degree / max(y$log.degree, na.rm=TRUE)
 colors <- palette(resolution)[as.numeric(cut(normalized, breaks=resolution))]
+plot(h, vertex.color=colors, vertex.size=0, vertex.label=NA, edge.arrow.size=0)
 
-# FIXME: como evitar essa "ordenada" tripla??
-colors <- colors[order(as.numeric(y$node))][order(order(as.numeric(V(g)$name)))]
-plot(g, vertex.color=colors, vertex.size=0, vertex.label=NA, edge.arrow.size=0)
 
 # Combinação dos dois plots por:
 # https://stackoverflow.com/questions/14124373/combine-base-and-ggplot-graphics-in-r-figure-window#14125565
