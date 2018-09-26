@@ -2,66 +2,57 @@ library(igraph)
 library(ggplot2)
 library(ggalt)
 library(ggrepel)
-library(GGally)
 library(grid)
 library(gridBase)
 library(gridExtra)
 
-
-graph.name <- "email-Enron"
-
 # Lê grafo
+graph.name <- "wiki-Vote"
 x <- read.table(
     paste("graphs/", graph.name, ".edgelist", sep=""),
     sep = ' ', header=F, strip.white = TRUE
     # colClasses = c("integer", "integer", "NULL")
 )
 
+# Cria grafo
 x[,1] <- as.character(x[,1])
 x[,2] <- as.character(x[,2])
 x <- as.matrix(x)
-
 g <- graph_from_edgelist(x, directed=F)
-
 
 # Lê embedding
 y <- read.table(
     paste("emb/", graph.name, "-2d.emb", sep=""),
-    sep = " ", skip=1)
-ordem <- order(y[,1])
-y <- y[ordem,]
+    sep = " ", skip=1, col.names=c("node", "x", "y"))
+y[,1] <- as.character(y[,1])
 
-# Salva graus em ordem crescente
-deg <- degree(g)
-names <- V(g)$name
-y$V4 <- deg[order(as.numeric(names))]
+# log-degree e componente
+deg <- degree(g, y$node)
+comps <- components(g)
+y$log.degree <- log(deg+1)
+y$component <- comps$membership[y$node]
 
 # Salva os vértices de maior grau de cada componente
-comps <- components(g)
-greatest.degree <- numeric()
+y$lab <- ""
 for(i in 1:comps$no)
 {
-    aux <- which(comps$membership %in% i)
-    greatest.degree[i] <- as.numeric(names[aux[which.max(deg[aux])]])
+    vertice <- names(which.max(deg[y$component==i]))
+    y$lab[match(vertice, y$node)] <- vertice
 }
-y$V5 <- y$V1
-y$V5[-which(y$V1 %in% greatest.degree)] <- ""
 
-ordem <- order(as.numeric(V(g)$name))
-y$V6 <- comps$membership[ordem]
-
-
-names(y) <- c("node", "x", "y", "degree", "lab", "component")
+# Pontos de maior log.degree por cima
+y <- y[order(y$log.degree),]
 
 # Gera os plots
-# Gradiente criado por:
-# https://natpoor.blogspot.com/2016/07/making-spectrumgradient-color-palette.html
 pdf(paste("plots/node2vec-2d ", graph.name, ".pdf", sep=""), width=14, height=7)
 par(mfrow=c(1,2))
 
-resolution <- 10
+# Plot do grafo
+# Gradiente criado por:
+# https://natpoor.blogspot.com/2016/07/making-spectrumgradient-color-palette.html
+resolution <- 100
 palette <- colorRampPalette(c('yellow','red'))
-normalized <- deg / max(deg, na.rm=TRUE)
+normalized <- y$log.degree / max(y$log.degree, na.rm=TRUE)
 colors <- palette(resolution)[as.numeric(cut(normalized, breaks=resolution))]
 plot(g, vertex.color=colors, vertex.size=0, vertex.label=NA, edge.arrow.size=0)
 
@@ -72,10 +63,11 @@ vps <- baseViewports()
 pushViewport(vps$figure)
 vp1 <-plotViewport(c(1.8,1,0,1))
 
-q <- ggplot(y, aes(x, y, label=lab, color=degree)) +
+# Plot do embedding
+q <- ggplot(y, aes(x, y, label=lab, color=log.degree)) +
     geom_point() +
-    # geom_encircle(aes(group=component), col=y$component) +
-    # geom_text_repel(color="black") +
+    geom_encircle(aes(group=component), col=y$component) +
+    geom_text_repel(color="black") +
     scale_color_gradient(low="yellow", high="red") +
     theme_classic(base_size = 14) +
     labs(x="", y="")
