@@ -7,7 +7,7 @@ library(gridBase)
 library(gridExtra)
 
 # Lê grafo
-graph.name <- "wiki-Vote"
+graph.name <- "soc-sign-bitcoinotc"
 x <- read.table(
     paste("graphs/", graph.name, ".edgelist", sep=""),
     sep = ' ', header=F, strip.white = TRUE
@@ -54,6 +54,9 @@ resolution <- 100
 palette <- colorRampPalette(c('yellow','red'))
 normalized <- y$log.degree / max(y$log.degree, na.rm=TRUE)
 colors <- palette(resolution)[as.numeric(cut(normalized, breaks=resolution))]
+
+# FIXME: como evitar essa "ordenada" tripla??
+colors <- colors[order(as.numeric(y$node))][order(order(as.numeric(V(g)$name)))]
 plot(g, vertex.color=colors, vertex.size=0, vertex.label=NA, edge.arrow.size=0)
 
 # Combinação dos dois plots por:
