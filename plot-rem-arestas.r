@@ -1,52 +1,15 @@
 library(ggplot2)
+library(grid)
 library(gridExtra)
 
 graph.name <- "email-Enron"
+porcents <- c(1, 5, 10, 20, 50, 90, 99)
 
-# FIXME: Leitura de entrada horroroza, arruma isso por favor
+# Lê o primeiro embedding e plota
 y0 <- read.table(
     paste("emb/", graph.name, "-2d.emb", sep=""),
     sep = " ", skip=1, col.names=c("node", "x", "y"))
 y0$telco <- "0"
-
-y1 <- read.table(
-    paste("emb/", graph.name, "-2d-1%rem.emb", sep=""),
-    sep = " ", skip=1, col.names=c("node", "x", "y"))
-k <- read.table(paste("emb/", graph.name, "-2d-1%rem.telco", sep=""), sep=",")
-y1$telco[match(as.numeric(k[,1]), y1$node)] <- as.character(k[,2])
-y1 <- y1[order(as.numeric(y1$telco)),]
-
-y5 <- read.table(
-    paste("emb/", graph.name, "-2d-5%rem.emb", sep=""),
-    sep = " ", skip=1, col.names=c("node", "x", "y"))
-k <- read.table(paste("emb/", graph.name, "-2d-5%rem.telco", sep=""), sep=",")
-y5$telco[match(as.numeric(k[,1]), y5$node)] <- as.character(k[,2])
-y5 <- y5[order(as.numeric(y5$telco)),]
-
-y10 <- read.table(
-    paste("emb/", graph.name, "-2d-10%rem.emb", sep=""),
-    sep = " ", skip=1, col.names=c("node", "x", "y"))
-k <- read.table(paste("emb/", graph.name, "-2d-10%rem.telco", sep=""), sep=",")
-y10$telco[match(as.numeric(k[,1]), y10$node)] <- as.character(k[,2])
-y10 <- y10[order(as.numeric(y10$telco)),]
-
-y20 <- read.table(
-    paste("emb/", graph.name, "-2d-20%rem.emb", sep=""),
-    sep = " ", skip=1, col.names=c("node", "x", "y"))
-k <- read.table(paste("emb/", graph.name, "-2d-20%rem.telco", sep=""), sep=",")
-y20$telco[match(as.numeric(k[,1]), y20$node)] <- as.character(k[,2])
-y20 <- y20[order(as.numeric(y20$telco)),]
-
-y50 <- read.table(
-    paste("emb/", graph.name, "-2d-50%rem.emb", sep=""),
-    sep = " ", skip=1, col.names=c("node", "x", "y"))
-k <- read.table(paste("emb/", graph.name, "-2d-50%rem.telco", sep=""), sep=",")
-y50$telco[match(as.numeric(k[,1]), y10$node)] <- as.character(k[,2])
-y50 <- y50[order(as.numeric(y50$telco)),]
-
-# FIXME: o mesmo vale para os plots
-pdf(paste("plots/Embedding de Remoção de Arestas/",
-    graph.name, ".pdf", sep=""), width=14, height=7)
 
 q0 <- ggplot(y0, aes(x, y, color=telco)) +
     geom_point(shape=".") +
@@ -54,35 +17,38 @@ q0 <- ggplot(y0, aes(x, y, color=telco)) +
     ggtitle("Todas as arestas") +
     labs(x="", y="")
 
-q1 <- ggplot(y1, aes(x, y, color=telco)) +
-    geom_point(shape=".") +
-    theme_classic(base_size = 14) +
-    ggtitle("Remoção entre 1%") +
-    labs(x="", y="")
+qlist <- list(q0)
 
-q5 <- ggplot(y5, aes(x, y, color=telco)) +
-    geom_point(shape=".") +
-    theme_classic(base_size = 14) +
-    ggtitle("Remoção entre 5%") +
-    labs(x="", y="")
-
-q10 <- ggplot(y10, aes(x, y, color=telco)) +
-    geom_point(shape=".") +
-    theme_classic(base_size = 14) +
-    ggtitle("Remoção entre 10%") +
-    labs(x="", y="")
+# Lê os demais e plota
+for(i in porcents)
+{
+    y <- read.table(
+        paste("emb/", graph.name, "-2d-", i, "%rem.emb", sep=""),
+        sep = " ", skip=1, col.names=c("node", "x", "y"))
     
-q20 <- ggplot(y20, aes(x, y, color=telco)) +
+    rem <- read.table(
+        paste("emb/", graph.name, "-2d-", i, "%rem.telco", sep=""),
+        sep=",", col.names=c("node", "telco"))
+    rem$match <- match(as.numeric(rem$node), y$node)
+    rem <- rem[!is.na(rem$match),]
+    
+    y$telco[rem$match] <- as.character(rem$telco)
+    y <- y[order(as.numeric(y$telco)),]
+
+    q <- ggplot(y, aes(x, y, color=telco)) +
     geom_point(shape=".") +
     theme_classic(base_size = 14) +
-    ggtitle("Remoção entre 20%") +
+    ggtitle(paste("Remoção entre ",i,"%")) +
     labs(x="", y="")
 
-q50 <- ggplot(y50, aes(x, y, color=telco)) +
-    geom_point(shape=".") +
-    theme_classic(base_size = 14) +
-    ggtitle("Remoção entre 50%") +
-    labs(x="", y="")
+    qlist <- append(qlist, list(q))
+}
 
-grid.arrange(q0, q1, q5, q10, q20, q50, ncol=3, top="Comparação de Rodadas do node2vec: remoção de aresta")
+# Salva os plots
+pdf(paste("plots/Embedding de Remoção de Arestas/",
+    graph.name, ".pdf", sep=""), width=17, height=7)
+n <- length(qlist)
+nCol <- ceiling(sqrt(n))+1
+top <- "Comparação de Rodadas do node2vec: remoção de aresta"
+do.call("grid.arrange", c(qlist, ncol=nCol, top=top))
 dev.off()
