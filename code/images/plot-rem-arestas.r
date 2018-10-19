@@ -3,7 +3,7 @@ library(grid)
 library(gridExtra)
 
 graph.name <- "email-Enron"
-porcents <- c(1, 5, 10, 20, 50, 90, 99)
+percents <- c(1, 5, 10, 20, 50, 90, 99)
 
 # Lê o primeiro embedding e plota
 y0 <- read.table(
@@ -20,7 +20,7 @@ q0 <- ggplot(y0, aes(x, y, color=telco)) +
 qlist <- list(q0)
 
 # Lê os demais e plota
-for(i in porcents)
+for(i in percents)
 {
     y <- read.table(
         paste("emb/", graph.name, "-2d-", i, "%rem.emb", sep=""),
