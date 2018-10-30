@@ -1,0 +1,1 @@
+convert -density 300 -depth 8 -quality 85 plots/Distancias/soc-sign-bitcoinotc.pdf plots/Distancias/soc-sign-bitcoinotc.png

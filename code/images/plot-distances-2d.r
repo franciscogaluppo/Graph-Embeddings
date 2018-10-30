@@ -39,7 +39,7 @@ for(i in rev(percents))
 }
 
 # Salva os plots
-pdf(paste("plots/Distancias/",
+pdf(paste("plots/Distâncias/",
     graph.name, ".pdf", sep=""), width=17, height=17)
 n <- length(qlist)
 nCol <- 4
