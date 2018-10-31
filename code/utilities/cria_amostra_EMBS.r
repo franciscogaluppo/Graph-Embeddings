@@ -2,7 +2,6 @@ library(igraph)
 
 tam.amostra <- 3000
 graph.name <- "scale-free"
-percents <- c(1, 5, 10, 20, 50, 90, 99)
 
 # Lê grafo
 tabela <- read.table(
