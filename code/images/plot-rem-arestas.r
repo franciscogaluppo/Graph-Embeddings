@@ -2,12 +2,13 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 
+emb <- "node2vec"
 graph.name <- "email-Enron"
 percents <- c(1, 5, 10, 20, 50, 90, 99)
 
 # Lê o primeiro embedding e plota
 y0 <- read.table(
-    paste("emb/", graph.name, "-2d.emb", sep=""),
+    paste("emb/", emb, "/", graph.name, "-2d.emb", sep=""),
     sep = " ", skip=1, col.names=c("node", "x", "y"))
 y0$telco <- "0"
 
@@ -23,11 +24,11 @@ qlist <- list(q0)
 for(i in percents)
 {
     y <- read.table(
-        paste("emb/", graph.name, "-2d-", i, "%rem.emb", sep=""),
+        paste("emb/", emb, "/", graph.name, "-2d-", i, "%rem.emb", sep=""),
         sep = " ", skip=1, col.names=c("node", "x", "y"))
     
     rem <- read.table(
-        paste("emb/", graph.name, "-2d-", i, "%rem.telco", sep=""),
+        paste("emb/", emb, "/", graph.name, "-2d-", i, "%rem.telco", sep=""),
         sep=",", col.names=c("node", "telco"))
     rem$match <- match(as.numeric(rem$node), y$node)
     rem <- rem[!is.na(rem$match),]

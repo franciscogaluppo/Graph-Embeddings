@@ -4,6 +4,7 @@ library(GGally)
 library(ggrepel)
 source("code/images/plot-func.r")
 
+emb <- "node2vec"
 graph.name <- "scale-free"
 
 # Lê grafo
@@ -17,7 +18,7 @@ g <- graph_from_edgelist(x+1, directed=F)
 
 # Lê embedding
 y <- read.table(
-    paste("emb/", graph.name, ".emb", sep=""),
+    paste("emb/", emb, "/", graph.name, ".emb", sep=""),
     sep = " ", skip=1)
 y[,1] <- y[,1]+1
 

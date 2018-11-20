@@ -1,14 +1,16 @@
 library(ggplot2)
 
+emb <- "node2vec"
+
 # Lê embedding
 graph.name <- "soc-sign-bitcoinotc"
 y1 <- read.table(
-    paste("emb/", graph.name, "-2d.emb", sep=""),
+    paste("emb/", emb, "/", graph.name, "-2d.emb", sep=""),
     sep = " ", skip=1, col.names=c("node", "x", "y"))
 y1$embedding <- "#1"
 
 y2 <- read.table(
-    paste("emb/", graph.name, "-2d2.emb", sep=""),
+    paste("emb/", emb, "/", graph.name, "-2d2.emb", sep=""),
     sep = " ", skip=1, col.names=c("node", "x", "y"))
 y2$embedding <- "#2"
 

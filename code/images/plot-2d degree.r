@@ -6,6 +6,8 @@ library(grid)
 library(gridBase)
 library(gridExtra)
 
+emb <- "node2vec"
+
 # Lê grafo
 graph.name <- "wiki-Vote"
 x <- read.table(
@@ -22,7 +24,7 @@ g <- graph_from_edgelist(x, directed=F)
 
 # Lê embedding
 y <- read.table(
-    paste("emb/", graph.name, "-2d.emb", sep=""),
+    paste("emb/", emb, "/", graph.name, "-2d.emb", sep=""),
     sep = " ", skip=1, col.names=c("node", "x", "y"))
 y[,1] <- as.character(y[,1])
 

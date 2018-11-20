@@ -2,6 +2,7 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 
+emb <- "node2vec"
 graph.name <- "soc-sign-bitcoinotc"
 percents <- c(1, 5, 10, 20, 50, 90, 99)
 qlist <- list()
@@ -12,7 +13,7 @@ for(i in rev(percents))
     print(i)
     # Lê distâncias
     y <- read.table(
-        paste("emb/", graph.name, "-2d-", i, "%rem.dist", sep=""),
+        paste("emb/", emb, "/", graph.name, "-2d-", i, "%rem.dist", sep=""),
         sep = ",", skip=1, col.names=c("d1", "d2", "grupo"))
     
     y$d1 <- (y$d1 - mean(y$d1))/sd(y$d1)

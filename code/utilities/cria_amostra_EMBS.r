@@ -1,5 +1,6 @@
 library(igraph)             
 
+emb <- "node2vec"
 tam.amostra <- 3000
 graph.name <- "scale-free"
 
@@ -26,12 +27,12 @@ amostra <- as.numeric(amostra)
 
 # Lê os embeddings
 emb1 <- read.table(
-    paste("emb/", graph.name, "-2d.emb", sep=""),
+    paste("emb/", emb, "/", graph.name, "-2d.emb", sep=""),
     sep = " ", skip=1, col.names=c("node", "x", "y")
 )
 
 emb2 <- read.table(
-    paste("emb/", graph.name, "-2d2.emb", sep=""),
+    paste("emb/", emb, "/", graph.name, "-2d2.emb", sep=""),
     sep = " ", skip=1, col.names=c("node", "x", "y")
 )
 

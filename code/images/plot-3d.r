@@ -2,6 +2,8 @@ library(igraph)
 library(car)
 library(rgl)
 
+emb <- "node2vec"
+
 myColorRamp <- function(colors, values)
 {
     v <- (values - min(values))/diff(range(values))
@@ -27,7 +29,7 @@ g <- graph_from_edgelist(x, directed=F)
 
 # Lê embedding
 y <- read.table(
-    paste("emb/", graph.name, "-3d.emb", sep=""),
+    paste("emb/", emb, "/", graph.name, "-3d.emb", sep=""),
     sep = " ", skip=1)
 ordem <- order(y[,1])
 y <- y[ordem,]
