@@ -1,6 +1,6 @@
 library(ggplot2)
 
-emb <- "node2vec"
+emb <- "struc2vec"
 
 # Lê embedding
 graph.name <- "soc-sign-bitcoinotc"
@@ -16,10 +16,10 @@ y2$embedding <- "#2"
 
 y <- rbind(y1, y2)
 
-pdf(paste("plots/node2vec-2d comparação rodadas ", graph.name, ".pdf", sep=""))
+pdf(paste("plots/", emb, "/", graph.name, ".pdf", sep=""))
 q <- ggplot(y, aes(x, y, color=embedding)) +
     geom_point() +
     theme_classic(base_size = 14) +
-    ggtitle("Comparação entre duas rodadas do node2vec")
+    ggtitle(paste("Comparação entre duas rodadas do ", emb, sep=""))
 q
 dev.off()
