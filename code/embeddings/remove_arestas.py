@@ -2,8 +2,10 @@ import networkx as nx
 import numpy as np
 from os import system
 
+dims = 128
+
 # Lê o grafo original
-grafo = "email-Enron"
+grafo = "soc-sign-bitcoinotc"
 g = nx.read_edgelist("graphs/{}.edgelist".format(grafo), delimiter=" ", nodetype=str)
 nodes = g.nodes()
 edges = g.edges()
@@ -22,9 +24,9 @@ for i in range(len(lista)-1, -1, -1):
 # Para cada tamanho
 for i in range(len(lista)):
     print(len(rem[i])/len(nodes))
-    edge = "graphs/{}-{}{}rem.edgelist".format(grafo,lista[i],"%")
-    emb = "emb/{}-2d-{}{}rem.telco".format(grafo,lista[i],"%")
-    run = "./snap-master/examples/node2vec/node2vec -i:{} -o:emb/{}-2d-{}{}rem.emb -d:2 &".format(edge,grafo,lista[i],"%")
+    edge = "graphs/{}-{}d-{}{}rem.edgelist".format(grafo,dims,lista[i],"%")
+    emb = "emb/node2vec/{}-{}d-{}{}rem.telco".format(grafo,dims,lista[i],"%")
+    run = "./snap-master/examples/node2vec/node2vec -i:{} -o:emb/node2vec/{}-{}d-{}{}rem.emb -d:{} &".format(edge,grafo,dims,lista[i],"%",dims)
 
     # Remove arestas
     n = len(rem[i])
