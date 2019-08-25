@@ -2,7 +2,7 @@
 
 This repository contains the code used to research about how we could use embedding algorithms to extract information of graphs with missing edges. Most of our analysis are in this README, but feel free to ask about our project.
 
-All of the researchers are from the Computer Science Department in Universidade Federal de Minas Gerais (UFMG), Brazil:
+All of the researchers are from the Computer Science Department at Universidade Federal de Minas Gerais (UFMG), Brazil:
 
 Francisco Galuppo Azevedo - franciscogaluppo@dcc.ufmg.br
 
